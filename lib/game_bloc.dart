@@ -1,53 +1,42 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:roulette/bet_model.dart';
+import 'package:roulette/sign_in_or_sing_up_screen.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameBloc {
+  final NavigatorState navigator;
+
+  GameBloc({required this.navigator}) {
+    print(
+        'FirebaseAuth.instance.currentUser!.isAnonymous - ${FirebaseAuth.instance.currentUser!.isAnonymous}');
+    if (FirebaseAuth.instance.currentUser != null &&
+        !FirebaseAuth.instance.currentUser!.isAnonymous) {
+      _userValueController.add(_userValue = 2000);
+      _userNameController.add(FirebaseAuth.instance.currentUser!.email ?? '');
+    }
+  }
+
+  final _userNameController = BehaviorSubject<String>();
+
   final _betController = BehaviorSubject<int>();
 
   final _userValueController = BehaviorSubject<int>();
 
-  final _tableNumberController = BehaviorSubject<int>();
+  final _betModelController = BehaviorSubject<BetModel>();
 
-  final _tableColorController = BehaviorSubject<Color>();
-
-  final _firstRangeNumbersController = BehaviorSubject<List<int>>();
-
-  final _secondRangeNumbersController = BehaviorSubject<List<int>>();
-
-  final _isNumberEvenController = BehaviorSubject<bool>();
-
-  Stream<bool> get isNumberEvenStream => _isNumberEvenController.stream;
-
-  Stream<List<int>> get firstRangeNumbersStream =>
-      _firstRangeNumbersController.stream;
-
-  Stream<List<int>> get secondRangeNumbersStream =>
-      _secondRangeNumbersController.stream;
-
-  Stream<Color> get tableColorStream => _tableColorController.stream;
+  Stream<String> get userNameStream => _userNameController.stream;
 
   Stream<int> get userValueStream => _userValueController.stream;
 
   Stream<int> get betStream => _betController.stream;
 
-  Stream<int> get tableNumberStream => _tableNumberController.stream;
-
-  Sink<int> get tableNumberSink => _tableNumberController.sink;
-
-  Sink<Color> get tableColorSink => _tableColorController.sink;
-
-  Sink<List<int>> get firstRangeNumbersSink =>
-      _firstRangeNumbersController.sink;
-
-  Sink<List<int>> get secondRangeNumbersSink =>
-      _secondRangeNumbersController.sink;
-
-  Sink<bool> get isNumberEvenSink => _isNumberEvenController.sink;
+  Sink<BetModel> get betModelSink => _betModelController.sink;
 
   int _countBet = 10;
-  int _userValue = 30000;
+  int _userValue = 0;
 
   void increaseCount() {
     _countBet = _countBet + 1;
@@ -59,61 +48,57 @@ class GameBloc {
     _betController.add(_countBet);
   }
 
-  void start(BuildContext context, int bet, int? tableNumber, Color? tableColor,
-      List<int>? firstRange, List<int>? secondRange, bool? isEven) {
-    Random rng = Random();
-    print(rng.nextInt(36));
-    _showResultDialog(rng.nextInt(36), tableNumber, context, bet, tableColor,
-        firstRange, secondRange, isEven);
+  void start(int bet, BuildContext context) async {
+    if (!FirebaseAuth.instance.currentUser!.isAnonymous) {
+      if (_betModelController.hasValue) {
+        Random rng = Random();
+        _showResultDialog(
+            rng.nextInt(36), context, bet, _betModelController.value);
+      }
+    } else {
+      await FirebaseAuth.instance.signOut();
+
+      navigator.pushReplacement(
+          MaterialPageRoute(builder: (context) => const SignInOrSignUpScreen()));
+    }
   }
 
   void _showResultDialog(
-      int number,
-      int? tableNumber,
-      BuildContext context,
-      int bet,
-      Color? tableColor,
-      List<int>? firstRange,
-      List<int>? secondRange, bool? isEven) {
+      int number, BuildContext context, int bet, BetModel betModel) {
     showDialog(
       context: context,
       builder: (context) {
-        print('number - $number');
-        print('tableNumber - $tableNumber');
-        print('tableColor - $tableColor');
-        print('firstRange - $firstRange');
-        print('secondRange - $secondRange');
         Color colorNumber = number.isEven ? Colors.black : Colors.red;
-        if (tableNumber != null) {
-          if (tableNumber == number) {
+        if (betModel.tableNumber != null) {
+          if (betModel.tableNumber == number) {
             _userValueController.add(_userValue = _userValue + bet);
           } else {
             _userValueController.add(_userValue = _userValue - bet);
           }
         }
-        if (tableColor != null) {
-          if (tableColor == colorNumber) {
+        if (betModel.tableColor != null) {
+          if (betModel.tableColor == colorNumber) {
             _userValueController.add(_userValue = _userValue + bet);
           } else {
             _userValueController.add(_userValue = _userValue - bet);
           }
         }
-        if (firstRange != null) {
-          if (firstRange.contains(tableNumber)) {
+        if (betModel.firstRange != null) {
+          if (betModel.firstRange!.contains(betModel.tableNumber)) {
             _userValueController.add(_userValue = _userValue + bet);
           } else {
             _userValueController.add(_userValue = _userValue - bet);
           }
         }
-        if (secondRange != null) {
-          if (secondRange.contains(tableNumber)) {
+        if (betModel.secondRange != null) {
+          if (betModel.secondRange!.contains(betModel.tableNumber)) {
             _userValueController.add(_userValue = _userValue + bet);
           } else {
             _userValueController.add(_userValue = _userValue - bet);
           }
         }
-        if (isEven != null) {
-          if (number.isEven == isEven) {
+        if (betModel.isNumberEven != null) {
+          if (number.isEven == betModel.isNumberEven) {
             _userValueController.add(_userValue = _userValue + bet);
           } else {
             _userValueController.add(_userValue = _userValue - bet);
@@ -132,12 +117,14 @@ class GameBloc {
     );
   }
 
+  void addValue(BetModel betModel) {
+    betModelSink.add(betModel);
+  }
+
   void dispose() {
     _betController.close();
     _userValueController.close();
-    _tableColorController.close();
-    _firstRangeNumbersController.close();
-    _secondRangeNumbersController.close();
-    _isNumberEvenController.close();
+    _betModelController.close();
+    _userNameController.close();
   }
 }

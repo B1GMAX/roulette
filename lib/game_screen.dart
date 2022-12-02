@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:roulette/bet_model.dart';
 import 'package:roulette/game_bloc.dart';
+import 'package:roulette/rotatedContainer.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -9,237 +11,54 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<GameBloc>(
       dispose: (context, bloc) => bloc.dispose(),
-      create: (BuildContext context) => GameBloc(),
+      create: (BuildContext context) => GameBloc(navigator: Navigator.of(context)),
       builder: (context, child) {
         return Scaffold(
-          body: Column(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 55),
-                  height: 629,
-                  width: 365,
-                  child: Row(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 9, right: 9, top: 10),
+              child: Column(
+                children: [
+                  Row(
                     children: [
                       Column(
                         children: [
-                          RotatedBox(
-                            quarterTurns: 1,
-                            child: Container(
-                              width: 180,
-                              height: 50,
-                              margin: const EdgeInsets.only(left: 50),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white)),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    '1st 12',
-                                    style: TextStyle(color: Colors.white),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: RotatedContainer(
+                              '1st 12',
+                              '1-18',
+                              'Even',
+                              () => context.read<GameBloc>().addValue(
+                                    BetModel(firstRange: [1 - 18]),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.white),
-                                              right: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          width: 90,
-                                          height: 30,
-                                          child: const Text(
-                                            '1-18',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .firstRangeNumbersSink
-                                              .add([1, 18]);
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          width: 88,
-                                          height: 30,
-                                          child: const Text(
-                                            'Even',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .isNumberEvenSink
-                                              .add(true);
-                                        },
-                                      )
-                                    ],
+                              () => context.read<GameBloc>().addValue(
+                                    BetModel(isNumberEven: true),
                                   ),
-                                ],
-                              ),
                             ),
                           ),
-                          RotatedBox(
-                            quarterTurns: 1,
-                            child: Container(
-                              width: 180,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white)),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    '2nd 12',
-                                    style: TextStyle(color: Colors.white),
+                          RotatedContainer(
+                              '2nd 12',
+                              'Red',
+                              'Black',
+                              () => context.read<GameBloc>().addValue(
+                                    BetModel(tableColor: Colors.red),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .tableColorSink
-                                              .add(Colors.red);
-                                        },
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              border: Border(
-                                                top: BorderSide(
-                                                    color: Colors.white),
-                                                right: BorderSide(
-                                                    color: Colors.white),
-                                              ),
-                                              color: Colors.red),
-                                          alignment: Alignment.center,
-                                          width: 90,
-                                          height: 30,
-                                          child: const Text(
-                                            'Red',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .tableColorSink
-                                              .add(Colors.black);
-                                        },
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              border: Border(
-                                                top: BorderSide(
-                                                    color: Colors.white),
-                                              ),
-                                              color: Colors.black),
-                                          alignment: Alignment.center,
-                                          width: 88,
-                                          height: 30,
-                                          child: const Text(
-                                            'Black',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                              () => context.read<GameBloc>().addValue(
+                                    BetModel(tableColor: Colors.black),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          RotatedBox(
-                            quarterTurns: 1,
-                            child: Container(
-                              width: 180,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white)),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    '3rd 12',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.white),
-                                              right: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          width: 90,
-                                          height: 30,
-                                          child: const Text(
-                                            'Odd',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .isNumberEvenSink
-                                              .add(false);
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          width: 88,
-                                          height: 30,
-                                          child: const Text(
-                                            '19-36',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          context
-                                              .read<GameBloc>()
-                                              .secondRangeNumbersSink
-                                              .add([19, 36]);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                              Colors.red,
+                              Colors.black),
+                          RotatedContainer(
+                            '3nd 12',
+                            'Odd',
+                            '19-36',
+                            () => context.read<GameBloc>().addValue(
+                                  BetModel(isNumberEven: false),
+                                ),
+                            () => context.read<GameBloc>().addValue(
+                                  BetModel(secondRange: [19 - 36]),
+                                ),
                           ),
                         ],
                       ),
@@ -259,82 +78,84 @@ class GameScreen extends StatelessWidget {
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
-                            Expanded(
-                              child: GridView.builder(
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: 36,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3, mainAxisExtent: 45),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      print('value - ${index + 1}');
-                                      context
-                                          .read<GameBloc>()
-                                          .tableNumberSink
-                                          .add(index + 1);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.white, width: 1.2),
-                                        color: index.isEven
-                                            ? Colors.red
-                                            : Colors.black,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        '${index + 1}',
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
+                            GridView.builder(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: 36,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3, mainAxisExtent: 45),
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    print('value - ${index + 1}');
+                                    context
+                                        .read<GameBloc>()
+                                        .betModelSink
+                                        .add(BetModel(tableNumber: index + 1));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.white, width: 1.2),
+                                      color: index.isEven
+                                          ? Colors.red
+                                          : Colors.black,
                                     ),
-                                  );
-                                },
-                              ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '${index + 1}',
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             Row(
                               children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.2,
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.2,
+                                      ),
                                     ),
+                                    height: 40,
+                                    child: const Text('2-1',
+                                        style: TextStyle(color: Colors.white)),
                                   ),
-                                  height: 40,
-                                  width: 105,
-                                  child: const Text('2-1',
-                                      style: TextStyle(color: Colors.white)),
                                 ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.2,
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.2,
+                                      ),
                                     ),
+                                    height: 40,
+                                    child: const Text('2-1',
+                                        style: TextStyle(color: Colors.white)),
                                   ),
-                                  height: 40,
-                                  width: 105,
-                                  child: const Text('2-1',
-                                      style: TextStyle(color: Colors.white)),
                                 ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.2,
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.2,
+                                      ),
                                     ),
+                                    height: 40,
+                                    child: const Text('2-1',
+                                        style: TextStyle(color: Colors.white)),
                                   ),
-                                  height: 40,
-                                  width: 105,
-                                  child: const Text('2-1',
-                                      style: TextStyle(color: Colors.white)),
                                 ),
                               ],
                             ),
@@ -343,133 +164,87 @@ class GameScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    StreamBuilder<int>(
-                        initialData: 30000,
-                        stream: context.read<GameBloc>().userValueStream,
-                        builder: (context, userSnapshot) {
-                          return Column(
-                            children: [
-                              Text('User name'),
-                              Text('${userSnapshot.data}'),
-                            ],
-                          );
-                        }),
-                    StreamBuilder<int>(
-                      initialData: 10,
-                      stream: context.read<GameBloc>().betStream,
-                      builder: (context, betSnapshot) {
-                        return Column(
-                          children: [
-                            const Text('Bet',
-                                style: TextStyle(
-                                    color: Colors.amber, fontSize: 18)),
-                            Row(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StreamBuilder<int>(
+                            stream: context.read<GameBloc>().userValueStream,
+                            builder: (context, userSnapshot) {
+                              return StreamBuilder<String>(
+                                initialData: '',
+                                stream: context.read<GameBloc>().userNameStream,
+                                builder: (context, nameSnapshot) {
+                                  return Column(
+                                    children: [
+                                      Text(nameSnapshot.data!),
+                                      Text('${userSnapshot.data}'),
+                                    ],
+                                  );
+                                }
+                              );
+                            }),
+                        StreamBuilder<int>(
+                          initialData: 10,
+                          stream: context.read<GameBloc>().betStream,
+                          builder: (context, betSnapshot) {
+                            return Column(
                               children: [
-                                IconButton(
-                                    onPressed: () {
-                                      context.read<GameBloc>().decreaseCount();
-                                    },
-                                    icon: const Icon(Icons.remove)),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      context.read<GameBloc>().increaseCount();
-                                    },
-                                    icon: Icon(Icons.add)),
-                              ],
-                            ),
-                            Text('${betSnapshot.data}'),
-                            StreamBuilder<List<int>>(
-                              stream: context
-                                  .read<GameBloc>()
-                                  .secondRangeNumbersStream,
-                              builder: (context, secondRangeSnapshot) {
-                                return StreamBuilder<List<int>>(
-                                  stream: context
-                                      .read<GameBloc>()
-                                      .firstRangeNumbersStream,
-                                  builder: (context, firstRangeSnapshot) {
-                                    return StreamBuilder<Color>(
-                                      stream: context
-                                          .read<GameBloc>()
-                                          .tableColorStream,
-                                      builder: (context, colorSnapshot) {
-                                        return StreamBuilder<int?>(
-                                          stream: context
+                                const Text('Bet',
+                                    style: TextStyle(
+                                        color: Colors.amber, fontSize: 18)),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          context
                                               .read<GameBloc>()
-                                              .tableNumberStream,
-                                          builder:
-                                              (context, tableNumberSnapshot) {
-                                            return StreamBuilder<bool>(
-                                                stream: context
-                                                    .read<GameBloc>()
-                                                    .isNumberEvenStream,
-                                                builder:
-                                                    (context, isEvenSnapshot) {
-                                                  return ElevatedButton(
-                                                    onPressed: isEvenSnapshot
-                                                                .hasData ||
-                                                            secondRangeSnapshot
-                                                                .hasData ||
-                                                            firstRangeSnapshot
-                                                                .hasData ||
-                                                            colorSnapshot
-                                                                .hasData ||
-                                                            tableNumberSnapshot
-                                                                .hasData
-                                                        ? () {
-                                                            context.read<GameBloc>().start(
-                                                                context,
-                                                                betSnapshot
-                                                                    .data!,
-                                                                tableNumberSnapshot
-                                                                    .data,
-                                                                colorSnapshot
-                                                                    .data,
-                                                                firstRangeSnapshot
-                                                                    .data,
-                                                                secondRangeSnapshot
-                                                                    .data,
-                                                                isEvenSnapshot
-                                                                    .data);
-                                                            print('Start');
-                                                          }
-                                                        : () {},
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                            backgroundColor:
-                                                                Colors.amber),
-                                                    child: const Text('Start',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 16)),
-                                                  );
-                                                });
-                                          },
-                                        );
+                                              .decreaseCount();
+                                        },
+                                        icon: const Icon(Icons.remove)),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          context
+                                              .read<GameBloc>()
+                                              .increaseCount();
+                                        },
+                                        icon: Icon(Icons.add)),
+                                  ],
+                                ),
+                                Text('${betSnapshot.data}'),
+                                StreamBuilder<int>(
+                                  initialData: 10,
+                                  stream: context.read<GameBloc>().betStream,
+                                  builder: (context, betSnapshot) {
+                                    return ElevatedButton(
+                                      onPressed: () {
+                                        context
+                                            .read<GameBloc>()
+                                            .start(betSnapshot.data!, context);
                                       },
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.amber),
+                                      child: const Text('Start',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16)),
                                     );
                                   },
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
