@@ -25,6 +25,33 @@ class SignUpScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 20, left: 20),
                   child: TextFormField(
                     cursorColor: Colors.deepPurple,
+                    controller: context.read<SignUpBloc>().nameController,
+                    decoration: const InputDecoration(
+                      focusColor: Colors.deepPurple,
+                      hintText: 'Name',
+                      hintStyle: TextStyle(color: Colors.deepPurple),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.deepPurple),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.deepPurple),
+                      ),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (name) => name != null &&
+                            context
+                                .read<SignUpBloc>()
+                                .nameController
+                                .text
+                                .isEmpty
+                        ? 'Enter your name'
+                        : null,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20, left: 20, top: 35),
+                  child: TextFormField(
+                    cursorColor: Colors.deepPurple,
                     controller: context.read<SignUpBloc>().emailController,
                     decoration: const InputDecoration(
                       focusColor: Colors.deepPurple,
@@ -44,11 +71,8 @@ class SignUpScreen extends StatelessWidget {
                             : null,
                   ),
                 ),
-                SizedBox(
-                  height: 15,
-                ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
+                  padding: const EdgeInsets.only(right: 20, left: 20, top: 35),
                   child: TextFormField(
                     cursorColor: Colors.deepPurple,
                     controller: context.read<SignUpBloc>().passwordController,

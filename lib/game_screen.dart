@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:roulette/bet_model.dart';
 import 'package:roulette/game_bloc.dart';
 import 'package:roulette/rotatedContainer.dart';
+import 'package:roulette/user_model.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -11,7 +12,8 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<GameBloc>(
       dispose: (context, bloc) => bloc.dispose(),
-      create: (BuildContext context) => GameBloc(navigator: Navigator.of(context)),
+      create: (BuildContext context) =>
+          GameBloc(navigator: Navigator.of(context)),
       builder: (context, child) {
         return Scaffold(
           body: SafeArea(
@@ -169,22 +171,18 @@ class GameScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        StreamBuilder<int>(
-                            stream: context.read<GameBloc>().userValueStream,
-                            builder: (context, userSnapshot) {
-                              return StreamBuilder<String>(
-                                initialData: '',
-                                stream: context.read<GameBloc>().userNameStream,
-                                builder: (context, nameSnapshot) {
-                                  return Column(
-                                    children: [
-                                      Text(nameSnapshot.data!),
-                                      Text('${userSnapshot.data}'),
-                                    ],
-                                  );
-                                }
-                              );
-                            }),
+                        StreamBuilder<UserModel>(
+                          stream: context.read<GameBloc>().userModelStream,
+                          builder: (context, userSnapshot) {
+                           return userSnapshot.hasData ?
+                             Column(
+                              children: [
+                                Text(userSnapshot.data!.name),
+                                Text('${userSnapshot.data!.value}'),
+                              ],
+                            ) : SizedBox.shrink();
+                          }
+                        ),
                         StreamBuilder<int>(
                           initialData: 10,
                           stream: context.read<GameBloc>().betStream,

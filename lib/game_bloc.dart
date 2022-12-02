@@ -1,37 +1,29 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:roulette/bet_model.dart';
 import 'package:roulette/sign_in_or_sing_up_screen.dart';
+import 'package:roulette/user_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameBloc {
   final NavigatorState navigator;
 
   GameBloc({required this.navigator}) {
-    print(
-        'FirebaseAuth.instance.currentUser!.isAnonymous - ${FirebaseAuth.instance.currentUser!.isAnonymous}');
-    if (FirebaseAuth.instance.currentUser != null &&
-        !FirebaseAuth.instance.currentUser!.isAnonymous) {
-      _userValueController.add(_userValue = 2000);
-      _userNameController.add(FirebaseAuth.instance.currentUser!.email ?? '');
-    }
+    _readUser();
   }
-
-  final _userNameController = BehaviorSubject<String>();
 
   final _betController = BehaviorSubject<int>();
 
-  final _userValueController = BehaviorSubject<int>();
-
   final _betModelController = BehaviorSubject<BetModel>();
 
-  Stream<String> get userNameStream => _userNameController.stream;
-
-  Stream<int> get userValueStream => _userValueController.stream;
+  final _userModelController = BehaviorSubject<UserModel>();
 
   Stream<int> get betStream => _betController.stream;
+
+  Stream<UserModel> get userModelStream => _userModelController.stream;
 
   Sink<BetModel> get betModelSink => _betModelController.sink;
 
@@ -58,8 +50,8 @@ class GameBloc {
     } else {
       await FirebaseAuth.instance.signOut();
 
-      navigator.pushReplacement(
-          MaterialPageRoute(builder: (context) => const SignInOrSignUpScreen()));
+      navigator.pushReplacement(MaterialPageRoute(
+          builder: (context) => const SignInOrSignUpScreen()));
     }
   }
 
@@ -71,44 +63,51 @@ class GameBloc {
         Color colorNumber = number.isEven ? Colors.black : Colors.red;
         if (betModel.tableNumber != null) {
           if (betModel.tableNumber == number) {
-            _userValueController.add(_userValue = _userValue + bet);
+            _userValue += bet * 35;
           } else {
-            _userValueController.add(_userValue = _userValue - bet);
+            _userValue -= bet * 35;
           }
         }
         if (betModel.tableColor != null) {
           if (betModel.tableColor == colorNumber) {
-            _userValueController.add(_userValue = _userValue + bet);
+            _userValue += bet;
           } else {
-            _userValueController.add(_userValue = _userValue - bet);
+            _userValue -= -bet;
           }
         }
         if (betModel.firstRange != null) {
           if (betModel.firstRange!.contains(betModel.tableNumber)) {
-            _userValueController.add(_userValue = _userValue + bet);
+            _userValue += bet;
           } else {
-            _userValueController.add(_userValue = _userValue - bet);
+            _userValue -= bet;
           }
         }
         if (betModel.secondRange != null) {
           if (betModel.secondRange!.contains(betModel.tableNumber)) {
-            _userValueController.add(_userValue = _userValue + bet);
+            _userValue += bet;
           } else {
-            _userValueController.add(_userValue = _userValue - bet);
+            _userValue -= bet;
           }
         }
         if (betModel.isNumberEven != null) {
           if (number.isEven == betModel.isNumberEven) {
-            _userValueController.add(_userValue = _userValue + bet);
+            _userValue += bet;
           } else {
-            _userValueController.add(_userValue = _userValue - bet);
+            _userValue -= bet;
           }
         }
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({'value': _userValue});
+
+        _userModelController
+            .add(_userModelController.value.copyWith(value: _userValue));
         return AlertDialog(
           content: Container(
             color: colorNumber,
             child: Text(
-              '$number',
+              number.toString(),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -121,10 +120,25 @@ class GameBloc {
     betModelSink.add(betModel);
   }
 
+  void _readUser() {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        _userModelController.add(UserModel(
+            name: documentSnapshot['name'], value: documentSnapshot['value']));
+        _userValue = documentSnapshot['value'];
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+  }
+
   void dispose() {
     _betController.close();
-    _userValueController.close();
     _betModelController.close();
-    _userNameController.close();
+    _userModelController.close();
   }
 }
