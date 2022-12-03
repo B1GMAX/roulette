@@ -23,6 +23,7 @@ class SignInScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20),
                   child: TextFormField(
+                    style: const TextStyle(color: Colors.white),
                     cursorColor: Colors.deepPurple,
                     controller: context.read<SignInBloc>().emailController,
                     decoration: const InputDecoration(
@@ -43,12 +44,13 @@ class SignInScreen extends StatelessWidget {
                             : null,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
                   child: TextFormField(
+                    style: const TextStyle(color: Colors.white),
                     cursorColor: Colors.deepPurple,
                     controller: context.read<SignInBloc>().passwordController,
                     decoration: const InputDecoration(
@@ -68,32 +70,36 @@ class SignInScreen extends StatelessWidget {
                         : null,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
                   onPressed: () {
                     context.read<SignInBloc>().signIn();
                   },
-                  child: Text('Sing In'),
+                  child: const Text('Sing In'),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
                   onPressed: () {
                     context.read<SignInBloc>().createAnonymUser();
                   },
-                  child: Text('Log in anonymously'),
+                  child: const Text('Log in anonymously'),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("No account?"),
-                    TextButton(onPressed: goToSignUp, child: Text('Sing Up'))
+                    const Text(
+                      'No account?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    TextButton(
+                        onPressed: goToSignUp, child: const Text('Sing Up'))
                   ],
                 ),
               ],

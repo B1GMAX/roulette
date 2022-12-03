@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:roulette/slide_screen.dart';
 
-import 'game_screen.dart';
 
 class SignInBloc{
   final NavigatorState navigator;
@@ -20,6 +20,8 @@ class SignInBloc{
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
+      navigator
+          .pushReplacement(MaterialPageRoute(builder: (context) => SlideScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -30,14 +32,12 @@ class SignInBloc{
     } catch (e) {
       print(e);
     }
-    navigator
-        .pushReplacement(MaterialPageRoute(builder: (context) => GameScreen()));
   }
 
   Future createAnonymUser() async {
     await FirebaseAuth.instance.signInAnonymously();
     navigator
-        .pushReplacement(MaterialPageRoute(builder: (context) => GameScreen()));
+        .pushReplacement(MaterialPageRoute(builder: (context) => SlideScreen()));
   }
 
   void dispose() {

@@ -24,6 +24,7 @@ class SignUpScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20),
                   child: TextFormField(
+                    style: const TextStyle(color: Colors.white),
                     cursorColor: Colors.deepPurple,
                     controller: context.read<SignUpBloc>().nameController,
                     decoration: const InputDecoration(
@@ -51,6 +52,7 @@ class SignUpScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 35),
                   child: TextFormField(
+                    style: const TextStyle(color: Colors.white),
                     cursorColor: Colors.deepPurple,
                     controller: context.read<SignUpBloc>().emailController,
                     decoration: const InputDecoration(
@@ -93,32 +95,36 @@ class SignUpScreen extends StatelessWidget {
                         : null,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
                   onPressed: () {
                     context.read<SignUpBloc>().signUp();
                   },
-                  child: Text('Sing Up'),
+                  child: const Text('Sing Up'),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 ElevatedButton(
                   onPressed: () {
                     context.read<SignUpBloc>().createAnonymUser();
                   },
-                  child: Text('Log in anonymously'),
+                  child: const Text('Log in anonymously'),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already have account?"),
-                    TextButton(onPressed: goToSignIn, child: Text('Sing In'))
+                    const Text(
+                      'Already have account?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    TextButton(
+                        onPressed: goToSignIn, child: const Text('Sing In'))
                   ],
                 ),
               ],
