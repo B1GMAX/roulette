@@ -21,4 +21,15 @@ class BetModel {
       this.firstDozen,
       this.secondDozen,
       this.thirdDozen});
+
+  bool get readyForGame =>
+      selectedNumber != null ||
+      tableColor != null ||
+      firstRange != null ||
+      secondRange != null ||
+      isNumberEven != null ||
+      zero != null ||
+      firstDozen != null ||
+      secondDozen != null ||
+      thirdDozen != null;
 }

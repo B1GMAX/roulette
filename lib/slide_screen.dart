@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:roulette/game_screen.dart';
@@ -27,10 +26,12 @@ class _SlideScreenState extends State<SlideScreen>
               children: [
                 TabBar(
                   onTap: (index) {
-                    context.read<SlideBloc>().changeUnderlineTabColorByOnTap(index);
+                    context
+                        .read<SlideBloc>()
+                        .changeUnderlineTabColorByOnTap(index);
                   },
                   controller: context.read<SlideBloc>().tabController,
-                  tabs: [
+                  tabs: const [
                     Tab(
                       child: Text('Game'),
                     ),
@@ -50,10 +51,10 @@ class _SlideScreenState extends State<SlideScreen>
                           .changeUnderlineTabColorByOnPageChange(value);
                     },
                     controller: context.read<SlideBloc>().pageController,
-                    children: [
-                      GameScreen(key: const ValueKey(1),),
-                      RatingScreen(key: const ValueKey(2),),
-                      SettingsScreen(key: const ValueKey(3),),
+                    children: const [
+                      GameScreen(),
+                      RatingScreen(),
+                      SettingsScreen(),
                     ],
                   ),
                 ),

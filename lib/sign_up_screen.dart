@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:roulette/anonim_regist_screen.dart';
 import 'package:roulette/sign_up_bloc.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -77,6 +78,7 @@ class SignUpScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 35),
                   child: TextFormField(
                     cursorColor: Colors.deepPurple,
+                    style: const TextStyle(color: Colors.white),
                     controller: context.read<SignUpBloc>().passwordController,
                     decoration: const InputDecoration(
                       focusColor: Colors.deepPurple,
@@ -109,7 +111,10 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<SignUpBloc>().createAnonymUser();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AnonimRegistrScreen()));
                   },
                   child: const Text('Log in anonymously'),
                 ),

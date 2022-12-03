@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:roulette/rating_dialog.dart';
 import 'package:roulette/sign_in_or_sing_up_screen.dart';
 
 class SettingsBloc {
@@ -16,6 +17,10 @@ class SettingsBloc {
         builder: (context) => const SignInOrSignUpScreen(),
       ),
     );
+  }
+
+  void showRetaDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => const RatingDialog());
   }
 
   void delete() async {

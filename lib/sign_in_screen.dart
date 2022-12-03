@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:roulette/sign_in_bloc.dart';
 
+import 'anonim_regist_screen.dart';
+
 class SignInScreen extends StatelessWidget {
   final VoidCallback goToSignUp;
 
@@ -84,7 +86,10 @@ class SignInScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<SignInBloc>().createAnonymUser();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AnonimRegistrScreen()));
                   },
                   child: const Text('Log in anonymously'),
                 ),

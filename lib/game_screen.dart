@@ -14,8 +14,9 @@ class GameScreen extends StatelessWidget {
       dispose: (context, bloc) => bloc.dispose(),
       create: (BuildContext context) => GameBloc(Navigator.of(context)),
       builder: (context, child) {
+        final bloc = context.read<GameBloc>();
         return Padding(
-          padding: const EdgeInsets.only(left: 9, right: 9, top: 30),
+          padding: const EdgeInsets.only(left: 9, right: 9, top: 16),
           child: Column(
             children: [
               Row(
@@ -26,72 +27,60 @@ class GameScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 10),
                         child: StreamBuilder<bool>(
                             initialData: false,
-                            stream: context
-                                .read<GameBloc>()
-                                .isFirstEighteenSelectedStream,
+                            stream: bloc.isFirstEighteenSelectedStream,
                             builder: (context, firstEighteenSnapshot) {
                               return StreamBuilder<bool>(
                                   initialData: false,
-                                  stream: context
-                                      .read<GameBloc>()
-                                      .isEvenSelectedStream,
+                                  stream: bloc.isEvenSelectedStream,
                                   builder: (context, evenSnapshot) {
                                     return StreamBuilder<bool>(
                                         initialData: false,
-                                        stream: context
-                                            .read<GameBloc>()
-                                            .isFirstDozenSelectedStream,
+                                        stream: bloc.isFirstDozenSelectedStream,
                                         builder: (context, firstDozenSnapshot) {
                                           return RotatedContainer(
                                             '1st 12',
                                             '1-18',
                                             'Even',
-                                                () {
-                                              context.read<GameBloc>().addValue(
-                                                BetModel(
-                                                    firstRange:
-                                                    List<int>.generate(
-                                                        18,
-                                                            (i) => i + 1)),
-                                              );
+                                            () {
+                                              !firstEighteenSnapshot.data!
+                                                  ? bloc.addValue(
+                                                      BetModel(
+                                                          firstRange: List<
+                                                                  int>.generate(
+                                                              18,
+                                                              (i) => i + 1)),
+                                                    )
+                                                  : bloc.addValue(
+                                                      BetModel(
+                                                          firstRange: null),
+                                                    );
+                                              bloc.isFirsEighteenSelectedSink
+                                                  .add(!firstEighteenSnapshot
+                                                      .data!);
                                             },
-                                                () {
+                                            () {
                                               !evenSnapshot.data!
-                                                  ? context
-                                                  .read<GameBloc>()
-                                                  .addValue(
-                                                BetModel(
-                                                    isNumberEven: true),
-                                              )
-                                                  : context
-                                                  .read<GameBloc>()
-                                                  .addValue(
-                                                BetModel(
-                                                    isNumberEven: null),
-                                              );
-                                              context
-                                                  .read<GameBloc>()
-                                                  .isEvenSelectedSink
+                                                  ? bloc.addValue(
+                                                      BetModel(
+                                                          isNumberEven: true),
+                                                    )
+                                                  : bloc.addValue(
+                                                      BetModel(
+                                                          isNumberEven: null),
+                                                    );
+                                              bloc.isEvenSelectedSink
                                                   .add(!evenSnapshot.data!);
                                             },
-                                                () {
+                                            () {
                                               !firstDozenSnapshot.data!
-                                                  ? context
-                                                  .read<GameBloc>()
-                                                  .addValue(BetModel(
-                                                  firstDozen: List<
-                                                      int>.generate(
-                                                      12,
-                                                          (i) => i + 1)))
-                                                  : context
-                                                  .read<GameBloc>()
-                                                  .addValue(BetModel(
-                                                  firstDozen: null));
-                                              context
-                                                  .read<GameBloc>()
-                                                  .isFirstDozenSelectedSink
-                                                  .add(!firstDozenSnapshot
-                                                  .data!);
+                                                  ? bloc.addValue(BetModel(
+                                                      firstDozen:
+                                                          List<int>.generate(12,
+                                                              (i) => i + 1)))
+                                                  : bloc.addValue(BetModel(
+                                                      firstDozen: null));
+                                              bloc.isFirstDozenSelectedSink.add(
+                                                  !firstDozenSnapshot.data!);
                                             },
                                             firstEighteenSnapshot.data!,
                                             evenSnapshot.data!,
@@ -103,63 +92,55 @@ class GameScreen extends StatelessWidget {
                       ),
                       StreamBuilder<bool>(
                           initialData: false,
-                          stream: context
-                              .read<GameBloc>()
-                              .isRedSelectedStream,
+                          stream: bloc.isRedSelectedStream,
                           builder: (context, redSnapshot) {
                             return StreamBuilder<bool>(
                                 initialData: false,
-                                stream: context
-                                    .read<GameBloc>()
-                                    .isBlackSelectedStream,
+                                stream: bloc.isBlackSelectedStream,
                                 builder: (context, blackSnapshot) {
                                   return StreamBuilder<bool>(
                                       initialData: false,
-                                      stream: context
-                                          .read<GameBloc>()
-                                          .isSecondDozenSelectedStream,
+                                      stream: bloc.isSecondDozenSelectedStream,
                                       builder: (context, secondDozenSnapshot) {
                                         return RotatedContainer(
-                                            '2nd 12',
-                                            'Red',
-                                            'Black', () {
-                                          context.read<GameBloc>().addValue(
-                                              BetModel(tableColor: Colors.red));
+                                            '2nd 12', 'Red', 'Black', () {
+                                          !redSnapshot.data!
+                                              ? bloc.addValue(
+                                                  BetModel(
+                                                      tableColor: Colors.red),
+                                                )
+                                              : bloc.addValue(
+                                                  BetModel(tableColor: null),
+                                                );
+                                          bloc.isRedSelectedSink
+                                              .add(!redSnapshot.data!);
                                         }, () {
                                           !blackSnapshot.data!
-                                              ? context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(
-                                                tableColor:
-                                                Colors.black),
-                                          )
-                                              : context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(tableColor: null),
-                                          );
-                                          context
-                                              .read<GameBloc>()
-                                              .isBlackSelectedSink
+                                              ? bloc.addValue(
+                                                  BetModel(
+                                                      tableColor: Colors.black),
+                                                )
+                                              : bloc.addValue(
+                                                  BetModel(tableColor: null),
+                                                );
+                                          bloc.isBlackSelectedSink
                                               .add(!blackSnapshot.data!);
                                         }, () {
                                           !secondDozenSnapshot.data!
-                                              ? context
-                                              .read<GameBloc>()
-                                              .addValue(BetModel(
-                                              secondDozen:
-                                              List<int>.generate(12,
+                                              ? bloc.addValue(
+                                                  BetModel(
+                                                    secondDozen:
+                                                        List<int>.generate(
+                                                      12,
                                                       (i) {
-                                                    return  i + 13;
-                                                  },),),)
-                                              : context
-                                              .read<GameBloc>()
-                                              .addValue(BetModel(
-                                              secondDozen: null));
-                                          context
-                                              .read<GameBloc>()
-                                              .isSecondDozenSelectedSink
+                                                        return i + 13;
+                                                      },
+                                                    ),
+                                                  ),
+                                                )
+                                              : bloc.addValue(
+                                                  BetModel(secondDozen: null));
+                                          bloc.isSecondDozenSelectedSink
                                               .add(!secondDozenSnapshot.data!);
                                         },
                                             redSnapshot.data!,
@@ -172,80 +153,59 @@ class GameScreen extends StatelessWidget {
                           }),
                       StreamBuilder<bool>(
                           initialData: false,
-                          stream: context
-                              .read<GameBloc>()
-                              .isOddSelectedStream,
+                          stream: bloc.isOddSelectedStream,
                           builder: (context, oddSnapshot) {
                             return StreamBuilder<bool>(
                                 initialData: false,
-                                stream: context
-                                    .read<GameBloc>()
-                                    .isSecondEighteenSelectedStream,
+                                stream: bloc.isSecondEighteenSelectedStream,
                                 builder: (context, secondEighteenSnapshot) {
                                   return StreamBuilder<bool>(
                                       initialData: false,
-                                      stream: context
-                                          .read<GameBloc>()
-                                          .isThirdDozenSelectedStream,
+                                      stream: bloc.isThirdDozenSelectedStream,
                                       builder: (context, thirdDozenSnapshot) {
                                         return RotatedContainer(
-                                            '3nd 12',
-                                            'Odd',
-                                            '19-36', () {
+                                            '3nd 12', 'Odd', '19-36', () {
                                           !oddSnapshot.data!
-                                              ? context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(
-                                                isNumberEven: false),
-                                          )
-                                              : context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(
-                                                isNumberEven: null),
-                                          );
-                                          context
-                                              .read<GameBloc>()
-                                              .isOddSelectedSink
+                                              ? bloc.addValue(
+                                                  BetModel(isNumberEven: false),
+                                                )
+                                              : bloc.addValue(
+                                                  BetModel(isNumberEven: null),
+                                                );
+                                          bloc.isOddSelectedSink
                                               .add(!oddSnapshot.data!);
                                         }, () {
                                           !secondEighteenSnapshot.data!
-                                              ? context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(
-                                                secondRange: List<int>.generate(18,
+                                              ? bloc.addValue(
+                                                  BetModel(
+                                                    secondRange:
+                                                        List<int>.generate(
+                                                      18,
                                                       (i) {
-                                                    return  i + 19;
-                                                  },),),
-                                          )
-                                              : context
-                                              .read<GameBloc>()
-                                              .addValue(
-                                            BetModel(secondRange: null),
-                                          );
-                                          context
-                                              .read<GameBloc>()
-                                              .isSecondEighteenSelectedSink
-                                              .add(!secondEighteenSnapshot
-                                              .data!);
+                                                        return i + 19;
+                                                      },
+                                                    ),
+                                                  ),
+                                                )
+                                              : bloc.addValue(
+                                                  BetModel(secondRange: null),
+                                                );
+                                          bloc.isSecondEighteenSelectedSink.add(
+                                              !secondEighteenSnapshot.data!);
                                         }, () {
                                           !thirdDozenSnapshot.data!
-                                              ? context
-                                              .read<GameBloc>()
-                                              .addValue(BetModel(
-                                              thirdDozen: List<int>.generate(36,
+                                              ? bloc.addValue(BetModel(
+                                                  thirdDozen:
+                                                      List<int>.generate(
+                                                    36,
                                                     (i) {
-                                                  return  i + 25;
-                                                },),))
-                                              : context
-                                              .read<GameBloc>()
-                                              .addValue(BetModel(
-                                              thirdDozen: null));
-                                          context
-                                              .read<GameBloc>()
-                                              .isThirdDozenSelectedSink
+                                                      return i + 25;
+                                                    },
+                                                  ),
+                                                ))
+                                              : bloc.addValue(
+                                                  BetModel(thirdDozen: null));
+                                          bloc.isThirdDozenSelectedSink
                                               .add(!thirdDozenSnapshot.data!);
                                         },
                                             oddSnapshot.data!,
@@ -261,41 +221,30 @@ class GameScreen extends StatelessWidget {
                       children: [
                         StreamBuilder<bool>(
                             initialData: false,
-                            stream:
-                            context
-                                .read<GameBloc>()
-                                .isZeroSelectedStream,
+                            stream: bloc.isZeroSelectedStream,
                             builder: (context, zeroSnapshot) {
                               return GestureDetector(
                                 onTap: !zeroSnapshot.data!
                                     ? () {
-                                  context
-                                      .read<GameBloc>()
-                                      .betModelSink
-                                      .add(BetModel(zero: 0));
-                                  context
-                                      .read<GameBloc>()
-                                      .isZeroSelectedSink
-                                      .add(!zeroSnapshot.data!);
-                                }
+                                        bloc.betModelSink
+                                            .add(BetModel(zero: 0));
+                                        bloc.isZeroSelectedSink
+                                            .add(!zeroSnapshot.data!);
+                                      }
                                     : () {
-                                  context
-                                      .read<GameBloc>()
-                                      .betModelSink
-                                      .add(BetModel(zero: null));
-                                  context
-                                      .read<GameBloc>()
-                                      .isZeroSelectedSink
-                                      .add(!zeroSnapshot.data!);
-                                },
+                                        bloc.betModelSink
+                                            .add(BetModel(zero: null));
+                                        bloc.isZeroSelectedSink
+                                            .add(!zeroSnapshot.data!);
+                                      },
                                 child: Container(
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: !zeroSnapshot.data!
-                                            ? Colors.white
-                                            : Colors.amber,
-                                        width: !zeroSnapshot.data! ? 1.2 : 3,
-                                      )),
+                                    color: !zeroSnapshot.data!
+                                        ? Colors.white
+                                        : Colors.amber,
+                                    width: !zeroSnapshot.data! ? 1.2 : 3,
+                                  )),
                                   alignment: Alignment.center,
                                   height: 50,
                                   child: const Text(
@@ -307,10 +256,7 @@ class GameScreen extends StatelessWidget {
                             }),
                         StreamBuilder<int>(
                             initialData: 37,
-                            stream:
-                            context
-                                .read<GameBloc>()
-                                .gridItemIndexStream,
+                            stream: bloc.gridItemIndexStream,
                             builder: (context, indexSnapshot) {
                               return GridView.builder(
                                 shrinkWrap: true,
@@ -318,32 +264,22 @@ class GameScreen extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: 36,
                                 gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, mainAxisExtent: 43),
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3, mainAxisExtent: 40),
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                     onTap: indexSnapshot.data! != index
                                         ? () {
-                                      print('value - ${index + 1}');
-                                      context
-                                          .read<GameBloc>()
-                                          .betModelSink
-                                          .add(BetModel(
-                                          selectedNumber: index + 1));
-                                      context
-                                          .read<GameBloc>()
-                                          .selectItemInGrid(index);
-                                    }
+                                            print('value - ${index + 1}');
+                                            bloc.betModelSink.add(BetModel(
+                                                selectedNumber: index + 1));
+                                            bloc.selectItemInGrid(index);
+                                          }
                                         : () {
-                                      context
-                                          .read<GameBloc>()
-                                          .selectItemInGrid(37);
-                                      context
-                                          .read<GameBloc>()
-                                          .betModelSink
-                                          .add(BetModel(
-                                          selectedNumber: null));
-                                    },
+                                            bloc.selectItemInGrid(37);
+                                            bloc.betModelSink.add(
+                                                BetModel(selectedNumber: null));
+                                          },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         border: Border.all(
@@ -425,51 +361,63 @@ class GameScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     StreamBuilder<UserModel>(
-                        stream: context
-                            .read<GameBloc>()
-                            .userModelStream,
+                        stream: bloc.userModelStream,
                         builder: (context, userSnapshot) {
                           return userSnapshot.hasData
                               ? Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  userSnapshot.data!.name,
-                                  style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Text(
-                                  '${userSnapshot.data!.value}',
-                                  style: const TextStyle(
-                                      color: Colors.amber,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                userSnapshot.data!.value == 0
-                                    ? ElevatedButton(
-                                  onPressed: () {
-                                    context
-                                        .read<GameBloc>()
-                                        .getFreeCoins();
-                                  },
-                                  child: Text('Get free coins'),
+                                  padding: const EdgeInsets.only(
+                                      left: 35,),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            userSnapshot.data!.name,
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(
+                                            width: 12,
+                                          ),
+                                          Text(
+                                            '${userSnapshot.data!.value}',
+                                            style: const TextStyle(
+                                                color: Colors.amber,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Text(
+                                        'winRate: ${userSnapshot.data!.winRate}',
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      userSnapshot.data!.value == 0
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                bloc.getFreeCoins();
+                                              },
+                                              child: Text('Get free coins'),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
                                 )
-                                    : SizedBox.shrink(),
-                              ],
-                            ),
-                          )
                               : SizedBox.shrink();
                         }),
                     StreamBuilder<int>(
                       initialData: 10,
-                      stream: context
-                          .read<GameBloc>()
-                          .betStream,
+                      stream: bloc.betStream,
                       builder: (context, betSnapshot) {
                         return Column(
                           children: [
@@ -480,7 +428,7 @@ class GameScreen extends StatelessWidget {
                               children: [
                                 IconButton(
                                     onPressed: () {
-                                      context.read<GameBloc>().decreaseCount();
+                                      bloc.decreaseCount();
                                     },
                                     icon: const Icon(Icons.remove)),
                                 const SizedBox(
@@ -488,7 +436,7 @@ class GameScreen extends StatelessWidget {
                                 ),
                                 IconButton(
                                     onPressed: () {
-                                      context.read<GameBloc>().increaseCount();
+                                      bloc.increaseCount();
                                     },
                                     icon: Icon(Icons.add)),
                               ],
@@ -496,15 +444,11 @@ class GameScreen extends StatelessWidget {
                             Text('${betSnapshot.data}'),
                             StreamBuilder<int>(
                               initialData: 10,
-                              stream: context
-                                  .read<GameBloc>()
-                                  .betStream,
+                              stream: bloc.betStream,
                               builder: (context, betSnapshot) {
                                 return ElevatedButton(
                                   onPressed: () {
-                                    context
-                                        .read<GameBloc>()
-                                        .start(betSnapshot.data!, context);
+                                    bloc.start(betSnapshot.data!, context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.amber),

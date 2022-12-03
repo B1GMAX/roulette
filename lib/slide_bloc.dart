@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SlideBloc {
   final SingleTickerProviderStateMixin _tickerProvider;
@@ -6,6 +7,10 @@ class SlideBloc {
   SlideBloc(this._tickerProvider) {
     tabController = TabController(length: 3, vsync: _tickerProvider);
   }
+
+  final _ratingIndexController = BehaviorSubject<int>();
+
+  Sink<int> get ratingIndexSink=> _ratingIndexController.sink;
 
   final PageController pageController = PageController();
 
@@ -22,7 +27,6 @@ class SlideBloc {
   }
 
   void dispose() {
-    _tickerProvider.dispose();
     tabController.dispose();
     pageController.dispose();
   }

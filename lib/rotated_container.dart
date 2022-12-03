@@ -39,7 +39,7 @@ class RotatedContainer extends StatelessWidget {
             GestureDetector(
               onTap: dozenAction,
               child: Container(
-                width: 170,
+                width: 158,
                 height: 25,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -68,7 +68,7 @@ class RotatedContainer extends StatelessWidget {
                             : Border.all(color: Colors.amber, width: 3),
                         color: firstColumnColor),
                     alignment: Alignment.center,
-                    width: 85,
+                    width: 79,
                     height: 30,
                     child: Text(
                       firstTextInRow,
@@ -87,7 +87,7 @@ class RotatedContainer extends StatelessWidget {
                             : Border.all(color: Colors.amber, width: 3),
                         color: secondColumnColor),
                     alignment: Alignment.center,
-                    width: 85,
+                    width: 79,
                     height: 30,
                     child: Text(
                       secondTextInRow,

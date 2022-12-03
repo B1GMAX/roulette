@@ -34,12 +34,6 @@ class SignInBloc{
     }
   }
 
-  Future createAnonymUser() async {
-    await FirebaseAuth.instance.signInAnonymously();
-    navigator
-        .pushReplacement(MaterialPageRoute(builder: (context) => SlideScreen()));
-  }
-
   void dispose() {
     emailController.dispose();
     passwordController.dispose();

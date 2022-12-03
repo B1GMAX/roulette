@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:roulette/slide_screen.dart';
 import 'package:roulette/user_model.dart';
@@ -40,21 +39,16 @@ class SignUpBloc {
     }
   }
 
-  Future createAnonymUser() async {
-    await FirebaseAuth.instance.signInAnonymously();
-    navigator.pushReplacement(
-        MaterialPageRoute(builder: (context) => SlideScreen()));
-  }
-
   Future _createUser() async {
     final docUser = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid);
 
-    final user = UserModel(name: nameController.text, value: 2000);
+    final user = UserModel(name: nameController.text, value: 2000, winRate: 0);
     final json = user.toJson();
 
     await docUser.set(json);
+
   }
 
   void dispose() {

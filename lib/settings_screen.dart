@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:roulette/settings_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+
+  const SettingsScreen({Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +18,45 @@ class SettingsScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
+                context.read<SettingsBloc>().showRetaDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(200, 50),
+              ),
+              child: const Text(
+                'Rate App',
+                style: TextStyle(fontSize: 37),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
                 context.read<SettingsBloc>().signOut();
               },
-              child: Text('Sign out'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(180, 50),
+              ),
+              child: const Text(
+                'Sign out',
+                style: TextStyle(fontSize: 35),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<SettingsBloc>().delete();
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(160, 50),
+              ),
+              child: const Text(
+                'Delete account',
+                style: TextStyle(fontSize: 28),
+              ),
             ),
           ],
         );
