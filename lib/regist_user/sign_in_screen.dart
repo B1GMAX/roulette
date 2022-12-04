@@ -28,7 +28,7 @@ class SignInScreen extends StatelessWidget {
                   child: UserInputField(
                     textColor: Colors.white,
                     fieldStyleColor: Colors.deepPurple,
-                    hintText: 'Name',
+                    hintText: 'Email',
                     validator: (email) =>
                         email != null && !EmailValidator.validate(email)
                             ? 'Enter a valid email'

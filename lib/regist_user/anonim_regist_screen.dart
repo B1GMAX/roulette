@@ -4,7 +4,6 @@ import 'package:roulette/regist_user/anonim_registr_bloc.dart';
 
 import '../widget/user_input_field.dart';
 
-
 class AnonimRegistrScreen extends StatelessWidget {
   const AnonimRegistrScreen({Key? key}) : super(key: key);
 

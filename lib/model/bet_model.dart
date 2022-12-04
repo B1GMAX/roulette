@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 class BetModel {
   final int? selectedNumber;
   final Color? tableColor;
@@ -22,14 +24,35 @@ class BetModel {
       this.secondDozen,
       this.thirdDozen});
 
-  bool get readyForGame =>
-      selectedNumber != null ||
-      tableColor != null ||
-      firstRange != null ||
-      secondRange != null ||
-      isNumberEven != null ||
-      zero != null ||
-      firstDozen != null ||
-      secondDozen != null ||
-      thirdDozen != null;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BetModel &&
+          runtimeType == other.runtimeType &&
+          selectedNumber == other.selectedNumber &&
+          tableColor == other.tableColor &&
+          listEquals(firstRange, other.firstRange)&&
+          listEquals(secondRange, other.secondRange)&&
+          isNumberEven == other.isNumberEven &&
+          zero == other.zero &&
+          listEquals(firstDozen, other.firstDozen)&&
+          listEquals(secondDozen, other.secondDozen)&&
+          listEquals(thirdDozen, other.thirdDozen);
+
+  @override
+  int get hashCode =>
+      selectedNumber.hashCode ^
+      tableColor.hashCode ^
+      firstRange.hashCode ^
+      secondRange.hashCode ^
+      isNumberEven.hashCode ^
+      zero.hashCode ^
+      firstDozen.hashCode ^
+      secondDozen.hashCode ^
+      thirdDozen.hashCode;
+
+  @override
+  String toString() {
+    return 'BetModel{selectedNumber: $selectedNumber, tableColor: $tableColor, firstRange: $firstRange, secondRange: $secondRange, isNumberEven: $isNumberEven, zero: $zero, firstDozen: $firstDozen, secondDozen: $secondDozen, thirdDozen: $thirdDozen}';
+  }
 }

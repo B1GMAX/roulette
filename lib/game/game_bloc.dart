@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:roulette/model/user_model.dart';
 import 'package:rxdart/rxdart.dart';
-
+import 'package:roulette/wheel.dart';
 import '../model/bet_model.dart';
 
 class GameBloc {
@@ -16,8 +16,6 @@ class GameBloc {
   }
 
   final _betController = BehaviorSubject<int>();
-
-  final _betModelController = BehaviorSubject<BetModel>();
 
   final _userModelController = BehaviorSubject<UserModel>();
 
@@ -78,8 +76,6 @@ class GameBloc {
 
   Stream<UserModel> get userModelStream => _userModelController.stream;
 
-  Sink<BetModel> get betModelSink => _betModelController.sink;
-
   Sink<bool> get isItemSelectedSink => _isItemSelectedController.sink;
 
   Sink<bool> get isZeroSelectedSink => _isZeroSelectedController.sink;
@@ -107,6 +103,8 @@ class GameBloc {
   Sink<bool> get isThirdDozenSelectedSink =>
       _isThirdDozenSelectedController.sink;
 
+  final List<BetModel> betModelList = [];
+
   int _countBet = 10;
   int _userValue = 0;
   int _winRate = 0;
@@ -122,101 +120,22 @@ class GameBloc {
   }
 
   void start(int bet, BuildContext context) async {
-    if (_betModelController.hasValue &&
-        _betModelController.value.readyForGame &&
-        _userValue > 0) {
+    if (betModelList.isNotEmpty && _userValue > 0) {
       Random rng = Random();
-      _showResultDialog(
-          rng.nextInt(36), context, bet, _betModelController.value);
+      _showResultDialog(rng.nextInt(36), context, bet, betModelList);
     }
   }
 
   void _showResultDialog(
-      int number, BuildContext context, int bet, BetModel betModel) {
+      int number, BuildContext context, int bet, List<BetModel> betModelList) {
     showDialog(
       context: context,
       builder: (context) {
         Color colorNumber = number.isEven ? Colors.black : Colors.red;
-        if (betModel.selectedNumber != null) {
-          if (betModel.selectedNumber == number) {
-            _userValue += bet * 35;
-          } else {
-            if (_userValue > 0) _userValue -= bet * 35;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.tableColor != null) {
-          if (betModel.tableColor == colorNumber) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.firstRange != null) {
-          if (betModel.firstRange!.contains(number)) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.secondRange != null) {
-          if (betModel.secondRange!.contains(number)) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.isNumberEven != null) {
-          if (number.isEven == betModel.isNumberEven) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.zero != null) {
-          if (number == betModel.zero) {
-            _userValue += bet * 35;
-          } else {
-            if (_userValue > 0) _userValue -= bet * 35;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.firstDozen != null) {
-          if (betModel.firstDozen!.contains(number)) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.secondDozen != null) {
-          if (betModel.secondDozen!.contains(number)) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
-        }
-        if (betModel.thirdDozen != null) {
-          if (betModel.thirdDozen!.contains(number)) {
-            _userValue += bet;
-          } else {
-            if (_userValue > 0) _userValue -= bet;
-            if (_userValue < 0) _userValue = 0;
-          }
+        for (final betModel in betModelList) {
+          _calculateUserValue(betModel, number, bet, colorNumber);
         }
 
-        if (_userModelController.hasValue) {
-          if (_userValue >= _userModelController.value.value) {
-            _winRate = _winRate + 1;
-          } else {
-            _winRate = 0;
-          }
-        }
         FirebaseFirestore.instance
             .collection('users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -224,22 +143,143 @@ class GameBloc {
 
         _userModelController.add(_userModelController.value
             .copyWith(value: _userValue, winRate: _winRate));
+
+        final changeButton = BehaviorSubject<bool>();
+
         return AlertDialog(
-          content: Container(
-            color: number == 0 ? Colors.green : colorNumber,
-            child: Text(
-              number.toString(),
-              style: const TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          backgroundColor: Colors.brown,
+          content: StreamBuilder<bool>(
+              initialData: false,
+              stream: changeButton.stream,
+              builder: (context, snapshot) {
+                return snapshot.hasData
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Wheel(
+                            onPressed: () {
+                              changeButton.add(true);
+                            },
+                          ),
+                          snapshot.data!
+                              ? Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 25, bottom: 25),
+                                  width: 70,
+                                  height: 20,
+                                  color:
+                                      number == 0 ? Colors.green : colorNumber,
+                                  child: Text(
+                                    number.toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Ok'))
+                        ],
+                      )
+                    : const SizedBox.shrink();
+              }),
         );
       },
     );
   }
 
-  void addValue(BetModel betModel) {
-    _betModelController.add(betModel);
+  void _calculateUserValue(
+      BetModel betModel, int number, int bet, Color colorNumber) {
+    if (betModel.selectedNumber != null) {
+      if (betModel.selectedNumber == number) {
+        _userValue += bet * 35;
+      } else {
+        if (_userValue > 0) _userValue -= bet * 35;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.tableColor != null) {
+      if (betModel.tableColor == colorNumber) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.firstRange != null) {
+      if (betModel.firstRange!.contains(number)) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.secondRange != null) {
+      if (betModel.secondRange!.contains(number)) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.isNumberEven != null) {
+      if (number.isEven == betModel.isNumberEven) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.zero != null) {
+      if (number == betModel.zero) {
+        _userValue += bet * 35;
+      } else {
+        if (_userValue > 0) _userValue -= bet * 35;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.firstDozen != null) {
+      if (betModel.firstDozen!.contains(number)) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.secondDozen != null) {
+      if (betModel.secondDozen!.contains(number)) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+    if (betModel.thirdDozen != null) {
+      if (betModel.thirdDozen!.contains(number)) {
+        _userValue += bet;
+      } else {
+        if (_userValue > 0) _userValue -= bet;
+        if (_userValue < 0) _userValue = 0;
+      }
+    }
+
+    if (_userModelController.hasValue) {
+      if (_userValue >= _userModelController.value.value) {
+        _winRate = _winRate + 1;
+      } else {
+        _winRate = 0;
+      }
+    }
+  }
+
+  void addBet(BetModel betModel) {
+    betModelList.add(betModel);
+  }
+
+  void removeBet(BetModel betModel) {
+    betModelList.remove(betModel);
   }
 
   void selectItemInGrid(int index) {
@@ -278,7 +318,6 @@ class GameBloc {
 
   void dispose() {
     _betController.close();
-    _betModelController.close();
     _userModelController.close();
     _isItemSelectedController.close();
     _gridItemIndexController.close();
