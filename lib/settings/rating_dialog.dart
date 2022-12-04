@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class RatingDialog extends StatefulWidget {
@@ -29,21 +28,19 @@ class _RatingDialogState extends State<RatingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Center(child: Text('Rate Us'),),
+      title: const Center(
+        child: Text('Rate Us'),
+      ),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          _buildStar(1),
-          _buildStar(2),
-          _buildStar(3),
-          _buildStar(4),
-          _buildStar(5),
+        children: [
+          for (int i = 1; i < 6; i++) _buildStar(i),
         ],
       ),
-      actions: <Widget>[
+      actions: [
         ElevatedButton(
           onPressed: Navigator.of(context).pop,
-          child: Text('CANCEL'),
+          child: const Text('CANCEL'),
         ),
       ],
     );

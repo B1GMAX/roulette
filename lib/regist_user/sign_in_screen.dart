@@ -1,8 +1,9 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:roulette/sign_in_bloc.dart';
+import 'package:roulette/regist_user/sign_in_bloc.dart';
 
+import '../widget/user_input_field.dart';
 import 'anonim_regist_screen.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -24,26 +25,16 @@ class SignInScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20),
-                  child: TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    cursorColor: Colors.deepPurple,
-                    controller: context.read<SignInBloc>().emailController,
-                    decoration: const InputDecoration(
-                      focusColor: Colors.deepPurple,
-                      hintText: 'Email',
-                      hintStyle: TextStyle(color: Colors.deepPurple),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: UserInputField(
+                    textColor: Colors.white,
+                    fieldStyleColor: Colors.deepPurple,
+                    hintText: 'Name',
                     validator: (email) =>
                         email != null && !EmailValidator.validate(email)
                             ? 'Enter a valid email'
                             : null,
+                    textEditingController:
+                        context.read<SignInBloc>().emailController,
                   ),
                 ),
                 const SizedBox(
@@ -51,25 +42,15 @@ class SignInScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
-                  child: TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    cursorColor: Colors.deepPurple,
-                    controller: context.read<SignInBloc>().passwordController,
-                    decoration: const InputDecoration(
-                      focusColor: Colors.deepPurple,
-                      hintText: 'Password',
-                      hintStyle: TextStyle(color: Colors.deepPurple),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: UserInputField(
+                    textColor: Colors.white,
+                    fieldStyleColor: Colors.deepPurple,
+                    hintText: 'Password',
                     validator: (value) => value != null && value.length < 6
                         ? 'Enter min 6 characters'
                         : null,
+                    textEditingController:
+                        context.read<SignInBloc>().passwordController,
                   ),
                 ),
                 const SizedBox(
@@ -89,7 +70,7 @@ class SignInScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AnonimRegistrScreen()));
+                            builder: (context) => const AnonimRegistrScreen()));
                   },
                   child: const Text('Log in anonymously'),
                 ),

@@ -1,15 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:roulette/slide_screen.dart';
+import 'package:roulette/slide/slide_screen.dart';
 
-
-class SignInBloc{
+class SignInBloc {
   final NavigatorState navigator;
 
   SignInBloc({required this.navigator});
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
@@ -20,8 +19,8 @@ class SignInBloc{
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-      navigator
-          .pushReplacement(MaterialPageRoute(builder: (context) => SlideScreen()));
+      navigator.pushReplacement(
+          MaterialPageRoute(builder: (context) => SlideScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');

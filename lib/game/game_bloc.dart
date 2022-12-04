@@ -3,14 +3,13 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:roulette/bet_model.dart';
-import 'package:roulette/user_model.dart';
+import 'package:roulette/model/user_model.dart';
 import 'package:rxdart/rxdart.dart';
 
-class GameBloc {
-  final NavigatorState navigator;
+import '../model/bet_model.dart';
 
-  GameBloc(this.navigator) {
+class GameBloc {
+  GameBloc() {
     if (FirebaseAuth.instance.currentUser != null) {
       _readUser();
     }
@@ -123,7 +122,9 @@ class GameBloc {
   }
 
   void start(int bet, BuildContext context) async {
-    if (_betModelController.hasValue && _betModelController.value.readyForGame && _userValue > 0) {
+    if (_betModelController.hasValue &&
+        _betModelController.value.readyForGame &&
+        _userValue > 0) {
       Random rng = Random();
       _showResultDialog(
           rng.nextInt(36), context, bet, _betModelController.value);
@@ -206,25 +207,23 @@ class GameBloc {
           } else {
             if (_userValue > 0) _userValue -= bet;
             if (_userValue < 0) _userValue = 0;
-
           }
         }
 
-       if(_userModelController.hasValue){
-         if(_userValue >= _userModelController.value.value){
-           _winRate = _winRate + 1;
-         }else{
-           _winRate = 0;
-         }
-       }
-        print('winRate - $_winRate');
+        if (_userModelController.hasValue) {
+          if (_userValue >= _userModelController.value.value) {
+            _winRate = _winRate + 1;
+          } else {
+            _winRate = 0;
+          }
+        }
         FirebaseFirestore.instance
             .collection('users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .update({'value': _userValue, 'winRate': _winRate});
 
-        _userModelController
-            .add(_userModelController.value.copyWith(value: _userValue, winRate: _winRate));
+        _userModelController.add(_userModelController.value
+            .copyWith(value: _userValue, winRate: _winRate));
         return AlertDialog(
           content: Container(
             color: number == 0 ? Colors.green : colorNumber,
@@ -253,14 +252,15 @@ class GameBloc {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      print('documentSnapshot - ${documentSnapshot.data()}');
       if (documentSnapshot.exists) {
-        _userModelController.add(UserModel(
-            name: documentSnapshot['name'], value: documentSnapshot['value'], winRate: documentSnapshot['winRate']),);
+        _userModelController.add(
+          UserModel(
+              name: documentSnapshot['name'],
+              value: documentSnapshot['value'],
+              winRate: documentSnapshot['winRate']),
+        );
         _userValue = documentSnapshot['value'];
         _winRate = documentSnapshot['winRate'];
-      } else {
-        print('Document does not exist on the database');
       }
     });
   }

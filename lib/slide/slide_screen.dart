@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:roulette/game_screen.dart';
-import 'package:roulette/rating_screen.dart';
-import 'package:roulette/settings_screen.dart';
-import 'package:roulette/slide_bloc.dart';
+import 'package:roulette/game/game_screen.dart';
+import 'package:roulette/rating/rating_screen.dart';
+import 'package:roulette/settings/settings_screen.dart';
+import 'package:roulette/slide/slide_bloc.dart';
 
 class SlideScreen extends StatefulWidget {
   const SlideScreen({Key? key}) : super(key: key);

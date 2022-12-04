@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:roulette/slide_screen.dart';
-import 'package:roulette/user_model.dart';
+import 'package:roulette/slide/slide_screen.dart';
+import 'package:roulette/model/user_model.dart';
 
 class SignUpBloc {
   final NavigatorState navigator;
 
   SignUpBloc({required this.navigator});
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
@@ -48,7 +48,6 @@ class SignUpBloc {
     final json = user.toJson();
 
     await docUser.set(json);
-
   }
 
   void dispose() {

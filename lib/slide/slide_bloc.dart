@@ -10,7 +10,7 @@ class SlideBloc {
 
   final _ratingIndexController = BehaviorSubject<int>();
 
-  Sink<int> get ratingIndexSink=> _ratingIndexController.sink;
+  Sink<int> get ratingIndexSink => _ratingIndexController.sink;
 
   final PageController pageController = PageController();
 

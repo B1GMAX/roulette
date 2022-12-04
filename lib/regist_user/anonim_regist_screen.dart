@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:roulette/anonim_registr_bloc.dart';
+import 'package:roulette/regist_user/anonim_registr_bloc.dart';
+
+import '../widget/user_input_field.dart';
+
 
 class AnonimRegistrScreen extends StatelessWidget {
   const AnonimRegistrScreen({Key? key}) : super(key: key);
@@ -19,31 +21,25 @@ class AnonimRegistrScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20),
-                  child: TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    cursorColor: Colors.deepPurple,
-                    controller: context.read<AnonimRegistBloc>().nameController,
-                    decoration: const InputDecoration(
-                      focusColor: Colors.deepPurple,
-                      hintText: 'Name',
-                      hintStyle: TextStyle(color: Colors.deepPurple),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepPurple),
-                      ),
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: UserInputField(
+                    textColor: Colors.white,
+                    fieldStyleColor: Colors.deepPurple,
+                    hintText: 'Name',
                     validator: (name) => name != null &&
-                            context.read<AnonimRegistBloc>().nameController
+                            context
+                                .read<AnonimRegistBloc>()
+                                .nameController
                                 .text
                                 .isEmpty
                         ? 'Enter your name'
                         : null,
+                    textEditingController:
+                        context.read<AnonimRegistBloc>().nameController,
                   ),
                 ),
-                SizedBox(height: 35,),
+                const SizedBox(
+                  height: 35,
+                ),
                 ElevatedButton(
                   onPressed: () {
                     context.read<AnonimRegistBloc>().createAnonymUser();
